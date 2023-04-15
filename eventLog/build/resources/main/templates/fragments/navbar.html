@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head></head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top" th:fragment="navbar">
+    <div class="container px-5">
+        <a class="navbar-brand" th:href="@{/}">Event Log</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span
+                class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ms-auto">
+                <th:block sec:authorize="isAuthenticated()">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/comments/chat-room}">Chat Room</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/events}">Events</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/events/create}">Create Event</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/users/all-users}">All Users</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:href="@{/users/my-profile}">My-Profile</a>
+                    </li>
+                    <li>
+                        <form class="nav-item" th:action="@{/users/logout}" th:method="post">
+                            <input class="nav-link" type="submit" value="Logout" style="color: black;">
+                        </form>
+                    </li>
+                </th:block>
+                <th:block sec:authorize="!isAuthenticated()">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/users/login}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/users/register}">Register</a>
+                    </li>
+                </th:block>
+            </ul>
+        </div>
+    </div>
+
+</nav>
+
+
+<!--<nav th:fragment="navbar">-->
+<!--    <ul class="navbar-nav ml-auto">-->
+<!--        <li class="nav-item">-->
+<!--            <a class="nav-link" th:href="@{/}">Home</a>-->
+<!--        </li>-->
+<!--        <th:block sec:authorize="isAuthenticated()">-->
+<!--            <li class="nav-item">-->
+<!--                <a class="nav-link" th:href="@{/events}">Events</a>-->
+<!--            </li>-->
+<!--            <li class="nav-item">-->
+<!--                <a class="nav-link" th:href="@{/events/create-event}">Create Event</a>-->
+<!--            </li>-->
+<!--            <li class="nav-item">-->
+<!--                <a class="nav-link" th:href="@{/users/all-users}">All Users</a>-->
+<!--            </li>-->
+<!--            <li class="nav-item">-->
+<!--                <a class="nav-link"-->
+<!--                   th:href="@{/users/my-profile}">My-Profile</a>-->
+<!--            </li>-->
+<!--            <li>-->
+<!--                <form th:action="@{/users/logout}" th:method="post">-->
+<!--                    <input type="submit" value="Logout">-->
+<!--                </form>-->
+<!--            </li>-->
+<!--        </th:block>-->
+<!--        <th:block sec:authorize="!isAuthenticated()">-->
+<!--            <li class="nav-item">-->
+<!--                <a class="nav-link" th:href="@{/users/login}">Login</a>-->
+<!--            </li>-->
+<!--            <li class="nav-item">-->
+<!--                <a class="nav-link" th:href="@{/users/register}">Register</a>-->
+<!--            </li>-->
+<!--        </th:block>-->
+<!--    </ul>-->
+<!--</nav>-->
+</body>
+</html>

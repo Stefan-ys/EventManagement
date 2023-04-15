@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head}"></head>
+<body>
+<div>
+    <nav th:replace="~{fragments/navbar}"></nav>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Gallery</h1>
+            <hr>
+            <div class="row">
+                <th:block th:each="picture : ${pictureViewModels}">
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card h-100">
+                            <a th:href="@{${picture.imageUrl}}" target="_blank">
+                                <img class="card-img-top" th:src="@{${picture.imageUrl}}" alt="Picture">
+                            </a>
+                            <div class="card-body">
+                                <h4 class="card-title">
+                                    <a th:href="@{${picture.imageUrl}}" target="_blank" th:text="${picture.imageUrl}">Picture</a>
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+                </th:block>
+            </div>
+            <hr>
+            <form th:object="${pictureBindingModel}" th:action="@{/events/{eventId}/add-picture(eventId=${eventId})}" method="POST">
+                <div class="form-group">
+                    <label for="imageUrl">Add a new picture:</label>
+                    <input type="text" class="form-control" id="imageUrl" name="imageUrl"
+                           th:field="*{imageUrl}" placeholder="Enter image URL">
+                    <div th:if="${#fields.hasErrors('imageUrl')}" th:errors="*{imageUrl}" class="invalid-feedback"></div>
+                </div>
+                <button type="submit" class="btn btn-primary">Add</button>
+            </form>
+        </div>
+    </div>
+</div>
+<div>
+    <footer th:replace="~{fragments/footer}"></footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head}"></head>
+<body>
+<div>
+    <nav th:replace="~{fragments/navbar}"></nav>
+</div>
+<div class="container">
+    <h1>Events</h1>
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <form th:action="@{/events}" th:method="get">
+                <div class="form-row">
+                    <div class="form-group col-md-3">
+                        <label th:for="sortBy">Sort by:</label>
+                        <select th:id="sortBy" name="sortBy" class="form-control">
+                            <option th:value="date">Event Date</option>
+                            <option th:value="host">Host Username</option>
+                            <option th:value="location">Location</option>
+                            <option th:value="category">Category</option>
+                            <option th:value="name">Name</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label th:for="statusFilter">Status:</label>
+                        <select th:id="statusFilter" name="statusFilter" class="form-control">
+                            <option th:value="ALL">All</option>
+                            <option th:value="ACTIVE">Active</option>
+                            <option th:value="COMPLETED">Completed</option>
+                            <option th:value="FULL">Full</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label>&nbsp;</label>
+                        <button type="submit" class="btn btn-primary btn-block">Filter</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <table class="table table-bordered table-hover">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Host</th>
+                    <th scope="col">Date and Time</th>
+                    <th scope="col">Duration in Hours</th>
+                    <th scope="col">Location</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Participants</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">&nbsp;</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="event : ${events}">
+                    <td th:text="${event.getName()}"></td>
+                    <td th:text="${event.hostUsername}"></td>
+                    <td th:text="${event.eventDateTime}"></td>
+                    <td th:text="${event.duration}"></td>
+                    <td th:text="${event.location}"></td>
+                    <td th:text="${event.category}"></td>
+                    <td th:text="${event.numberOfParticipants}"></td>
+                    <td th:text="${event.price}"></td>
+                    <td th:style="${event.status == 'ACTIVE' ? 'background-color: #d1e7dd;' : 'background-color: #f8d7da;'}">
+                        <span th:text="${event.status}"></span>
+                    </td>
+                    <td>
+                        <a th:href="@{/events/{eventId}/details(eventId=${event.getId()})}"
+                           class="btn btn-sm btn-primary">
+                            Details
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col">
+            <a th:href="@{/events/create}" class="btn btn-success float-end">
+                Create Event
+            </a>
+        </div>
+    </div>
+</div>
+
+
+<!--<h1 class="mb-4">All Events</h1>-->
+<!--<form th:action="@{/events}" th:method="get" id="sortForm">-->
+<!--    <label th:for="sort">Sort by:</label>-->
+<!--    <select th:name="sort" th:id="sort" onchange="document.getElementById('sortForm').submit()">-->
+<!--        <option th:value="date">Date</option>-->
+<!--        <option th:value="town">Town</option>-->
+<!--        <option th:value="activity">Activity</option>-->
+<!--        <option th:value="host">Host</option>-->
+<!--        <option th:value="name">Name</option>-->
+<!--    </select>-->
+<!--</form>-->
+
+<!--<table class="table table-striped">-->
+<!--<table class="table table-striped">-->
+<!--    <thead>-->
+<!--    <tr>-->
+<!--        <th scope="col">Name</th>-->
+<!--        <th scope="col">Date</th>-->
+<!--        <th scope="col">Town</th>-->
+<!--        <th scope="col">Host</th>-->
+<!--        <th scope="col">Activity</th>-->
+<!--        <th scope="col">Participants</th>-->
+<!--    </tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    <tr th:each="event : ${events}">-->
+<!--        <td th:text="${event.getName()}"></td>-->
+<!--        <td th:text="${event.getEventDateTime()}"></td>-->
+<!--        <td th:text="${event.getTownName()}"></td>-->
+<!--        <td><a class="text-decoration-none" th:href="@{/users/{userId}/profile(userId=${event.getHostId()})}"-->
+<!--               th:text="${event.getHostOfEvent()}"></a></td>-->
+<!--        <td th:text="${event.getActivityName()}"></td>-->
+<!--        <td>-->
+<!--            <p th:text="${event.getNumberOfParticipantsJoined()} + ' / ' + ${event.getNumberOfParticipantsAllowed()}"></p>-->
+<!--        </td>-->
+<!--        <td>-->
+<!--            <a class="btn btn-primary" th:href="@{'/events/details/' + ${event.getId()}}">Details</a>-->
+<!--        </td>-->
+<!--    </tr>-->
+<!--    </tbody>-->
+<!--</table>-->
+<!--<a class="btn btn-success" href="/events/create">Create Event</a>-->
+
+
+<div>
+    <footer th:replace="~{fragments/footer}"></footer>
+</div>
+</body>
+</html>

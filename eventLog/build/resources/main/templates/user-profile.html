@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head}"></head>
+<body>
+<div>
+    <nav th:replace="~{fragments/navbar}"></nav>
+</div>
+
+<div class="container">
+    <h1>User Profile</h1>
+    <div th:if="${successMessage}" class="alert alert-success">
+        <p th:text="${successMessage}"></p>
+    </div>
+
+    <div th:if="${errorMessage}" class="alert alert-danger">
+        <p th:text="${errorMessage}"></p>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <img th:if="${userViewModel != null}" th:src="${userViewModel?.imageUrl}"
+                 class="img-fluid rounded-circle mx-auto d-block" alt="User Image">
+        </div>
+
+        <div class="col-md-9">
+            <h2 th:text="${userViewModel.firstName + ' ' + userViewModel.lastName}"></h2>
+
+            <dl class="row">
+                <dt class="col-sm-3">Username</dt>
+                <dd class="col-sm-9" th:text="${userViewModel.username}"></dd>
+
+                <dt class="col-sm-3">Email</dt>
+                <dd class="col-sm-9" th:text="${userViewModel.email}"></dd>
+
+                <dt class="col-sm-3">Phone</dt>
+                <dd class="col-sm-9" th:text="${userViewModel.phoneNumber}"></dd>
+
+                <dt class="col-sm-3">Location</dt>
+                <dd class="col-sm-9" th:text="${userViewModel.location}"></dd>
+
+                <dt class="col-sm-3">Role</dt>
+                <dd class="col-sm-9" th:text="${userViewModel.role}"></dd>
+            </dl>
+
+            <div th:if="${canEdit == true}" class="mb-4">
+                <a th:href="@{/users/{userId}/edit (userId=${userViewModel.getId()})}" class="btn btn-primary">Edit
+                    Profile</a>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="mt-4 mb-2">Events Hosted</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Number of Participants</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="event, index : ${eventsHostedList}">
+            <td th:text="${index.index + 1}"></td>
+            <td th:text="${event.getName()}"></td>
+            <td th:text="${event.getEventDateTime()}"></td>
+            <td th:text="${event.getNumberOfParticipants()}"></td>
+            <td th:text="${event.getStatus()}"
+                th:style="${event.getStatus() == 'ACTIVE' ? 'background-color: #d1e7dd;' : 'background-color: #f8d7da;'}"></td>
+            <td>
+                <a th:href="@{/events/{eventId}/details(eventId=${event.getId()})}" class="btn btn-primary">Details</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2 class="mt-4 mb-2">Events Joined</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Date</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="event, index : ${eventsJoinedList}">
+            <td th:text="${index.index + 1}"></td>
+            <td th:text="${event.getName()}"></td>
+            <td th:text="${event.getEventDateTime()}"></td>
+            <td>
+                <a th:href="@{/events/{eventId}/details(eventId=${event.getId()})}"
+                   class="btn btn-primary">Details</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+<div>
+    <footer th:replace="~{fragments/footer}"></footer>
+</div>
+</body>
+</html>
