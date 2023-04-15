@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head}"></head>
+<body>
+<div>
+    <nav th:replace="~{fragments/navbar}"></nav>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h2>User Profile Edit Form</h2>
+            <form action="#" th:action="@{/users/{userId}/edit(userId=${userViewModel.getId()})}"
+                  th:object="${userEditBindingModel}" th:method="post">
+                <div class="form-group">
+                    <label for="imageUrl">Image URL:</label>
+                    <input type="url" class="form-control" id="imageUrl" th:field="*{imageUrl}">
+                    <div th:if="${#fields.hasErrors('imageUrl')}" th:errors="*{imageUrl}"
+                         class="alert alert-danger"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Location:</label>
+                    <select class="form-control" id="location" th:field="*{location}" required>
+                        <option th:each="location : ${locations}"
+                                th:value="${location}" th:text="${location}">
+                        </option>
+                    </select>
+                    <div th:if="${#fields.hasErrors('location')}" th:errors="*{location}"
+                         class="alert alert-danger"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="firstName">First Name:</label>
+                    <input type="text" class="form-control" id="firstName" th:field="*{firstName}" required>
+                    <div th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"
+                         class="alert alert-danger"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="lastName">Last Name:</label>
+                    <input type="text" class="form-control" id="lastName" th:field="*{lastName}" required>
+                    <div th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"
+                         class="alert alert-danger"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                    <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="alert alert-danger"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="phoneNumber">Phone Number:</label>
+                    <input type="tel" class="form-control" id="phoneNumber" th:field="*{phoneNumber}" required>
+                    <div th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"
+                         class="alert alert-danger"></div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save</button>
+
+                <div th:if="${canEdit == true}"class="mb-4 float-left">
+                    <a th:href="@{/users/{userId}/change-username(userId=${userViewModel.getId()})}" class="btn btn-primary float-left">Change Username And Password</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div>
+    <footer th:replace="~{fragments/footer}"></footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head}"></head>
+
+<body>
+<div>
+    <nav th:replace="~{fragments/navbar}" class="navbar"></nav>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h2>Create Event Form</h2>
+
+            <form th:action="@{/events/create}" th:object="${eventBindingModel}" th:method="post">
+                <div class="form-group">
+                    <label for="name">Event Name:</label>
+                    <input type="text" th:field="*{name}" class="form-control"
+                           th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''"
+                           id="name" placeholder="Enter Event Name">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                </div>
+                <div class="form-group">
+                    <label for="description">Event Description:</label>
+                    <textarea th:field="*{description}" class="form-control"
+                              th:classappend="${#fields.hasErrors('description')} ? 'is-invalid' : ''"
+                              id="description" placeholder="Enter Event Description"></textarea>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}"
+                         th:errors="*{description}"></div>
+                </div>
+                <div class="form-group">
+                    <label for="location">Location:</label>
+                    <select th:field="*{location}" class="form-control"
+                            th:classappend="${#fields.hasErrors('location')} ? 'is-invalid' : ''"
+                            id="location">
+                        <option value="">Select Location</option>
+                        <option th:each="location : ${locations}"
+                                th:value="${location}" th:text="${location}"></option>
+                    </select>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('location')}"
+                         th:errors="*{location}"></div>
+                </div>
+                <div class="form-group">
+                    <label for="eventDateTime">Event Date and Time:</label>
+                    <input type="datetime-local" th:field="*{eventDateTime}" class="form-control"
+                           th:classappend="${#fields.hasErrors('eventDateTime')} ? 'is-invalid' : ''"
+                           id="eventDateTime">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('eventDateTime')}"
+                         th:errors="*{eventDateTime}"></div>
+                </div>
+                <div class="form-group">
+                    <label for="category">Category:</label>
+                    <select th:field="*{category}" class="form-control"
+                            th:classappend="${#fields.hasErrors('category')} ? 'is-invalid' : ''"
+                            id="category">
+                        <option value="">Select Category</option>
+                        <option th:each="category : ${categories}"
+                                th:value="${category}" th:text="${category}"></option>
+                    </select>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('category')}"
+                         th:errors="*{category}"></div>
+                </div>
+                <div class="form-group">
+                    <label for="numberOfParticipants">Number of Participants:</label>
+                    <input type="number" th:field="*{numberOfParticipants}" class="form-control"
+                           th:classappend="${#fields.hasErrors('numberOfParticipants')} ? 'is-invalid' : ''"
+                           id="numberOfParticipants">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('numberOfParticipants')}"
+                         th:errors="*{numberOfParticipants}"></div>
+                </div>
+                <div class="form-group">
+                    <label for="price">Price:</label>
+                    <input type="number" class="form-control" id="price" th:field="*{price}"
+                           th:classappend="${#fields.hasErrors('price')} ? 'is-invalid' : ''">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+                </div>
+                <div class="form-group">
+                    <label for="duration">Duration (in hours):</label>
+                    <input type="number" class="form-control" id="duration" th:field="*{duration}"
+                           th:classappend="${#fields.hasErrors('duration')} ? 'is-invalid' : ''">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('duration')}"
+                         th:errors="*{duration}"></div>
+                </div>
+                <button type="submit" class="btn btn-primary">Create Event</button>
+            </form>
+        </div>
+    </div>
+</div>
+<div>
+    <footer th:replace="~{fragments/footer}"></footer>
+</div>
+</body>
+
+</html>

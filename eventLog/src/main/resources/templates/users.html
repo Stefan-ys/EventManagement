@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head}"></head>
+<body>
+<div class="container">
+    <nav th:replace="~{fragments/navbar}" class="navbar"></nav>
+</div>
+<h1 class="display-4">All Users</h1>
+<table class="table">
+    <thead class="thead-dark">
+    <tr>
+        <th>Username</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Events Hosted</th>
+        <th>Events Joined</th>
+        <th>Role</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${allUsers}">
+        <td th:text="*{user.getUsername()}"></td>
+        <td th:text="*{user.getFirstName()}"></td>
+        <td th:text="*{user.getLastName()}"></td>
+        <td th:text="*{user.getNumberOfEventsHosted()}"></td>
+        <td th:text="*{user.numberOfEventsJoined}"></td>
+        <td th:text="*{user.getRole()}"></td>
+        <td><a class="btn btn-primary" th:href="@{/users/{userId}/profile (userId=${user.getId()})}">View Profile</a></td>
+    </tr>
+    </tbody>
+</table>
+<div>
+    <footer th:replace="~{fragments/footer}"></footer>
+</div>
+</body>
+
+</html>
