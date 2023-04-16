@@ -7,8 +7,6 @@ import com.project.eventlog.domain.entity.CommentEntity;
 import java.util.List;
 
 public interface CommentService {
-    void addReply(long commentId, CommentServiceModel reply);
-
     List<CommentViewModel> getAllCommentsWithoutEvent();
 
     List<CommentViewModel> getAllCommentsByEvent(Long eventId);

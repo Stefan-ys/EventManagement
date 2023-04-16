@@ -30,23 +30,6 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void addReply(long commentId, CommentServiceModel reply) {
-        CommentEntity parentCommentEntity = commentRepository.findById(commentId)
-                .orElseThrow(() -> new IllegalArgumentException("No such comment Id"));
-
-        if (parentCommentEntity.getParentComment() != null) {
-            throw new IllegalArgumentException("Cannot reply to a reply comment");
-        }
-
-        CommentEntity commentEntity = modelMapper.map(reply, CommentEntity.class);
-
-        commentEntity.setParentComment(parentCommentEntity);
-        parentCommentEntity.getReplies().add(commentEntity);
-
-        commentRepository.saveAll(List.of(parentCommentEntity, commentEntity));
-    }
-
-    @Override
     public List<CommentViewModel> getAllCommentsWithoutEvent() {
         return commentRepository.findAllByEventIdIsNullOrderByDateTimeDesc()
                 .stream()
@@ -85,7 +68,6 @@ public class CommentServiceImpl implements CommentService {
         commentEntity.setContent(commentServiceModel.getContent());
         commentRepository.save(commentEntity);
 
-
     }
 
 
@@ -96,7 +78,6 @@ public class CommentServiceImpl implements CommentService {
                 .setAuthorUsername(commentEntity.getAuthor().getUsername())
                 .setAuthorId(commentEntity.getAuthor().getId())
                 .setContent(commentEntity.getContent())
-                .setDateTime(dateTimeFormatter.format(commentEntity.getDateTime()))
-                .setReplies(commentEntity.getReplies().stream().map(this::convertToViewModel).collect(Collectors.toList()));
+                .setDateTime(dateTimeFormatter.format(commentEntity.getDateTime()));
     }
 }

@@ -33,4 +33,5 @@ public interface UserService {
     long fetUserIdByUsername(String name);
 
     void changeUsername(Long userId, UserChangeUsernameServiceModel userChangeUsernameServiceModel);
+
 }

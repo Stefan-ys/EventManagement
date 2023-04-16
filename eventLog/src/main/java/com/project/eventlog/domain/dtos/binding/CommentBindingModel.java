@@ -11,7 +11,6 @@ public class CommentBindingModel {
     @Size(min = 1, max = 500, message = "Content must be between 1 and 500 characters long.")
     private String content;
 
-    private Long parentCommentId;
 
     public CommentBindingModel() {
     }
@@ -26,12 +25,4 @@ public class CommentBindingModel {
         return this;
     }
 
-    public Long getParentCommentId() {
-        return parentCommentId;
-    }
-
-    public CommentBindingModel setParentCommentId(Long parentCommentId) {
-        this.parentCommentId = parentCommentId;
-        return this;
-    }
 }

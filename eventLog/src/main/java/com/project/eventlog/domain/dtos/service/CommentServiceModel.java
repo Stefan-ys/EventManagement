@@ -11,7 +11,6 @@ public class CommentServiceModel {
     private long eventId;
     private LocalDateTime dateTime;
     private String content;
-    private long parentCommentId;
 
     public CommentServiceModel() {
     }
@@ -61,12 +60,4 @@ public class CommentServiceModel {
         return this;
     }
 
-    public long getParentCommentId() {
-        return parentCommentId;
-    }
-
-    public CommentServiceModel setParentCommentId(long parentCommentId) {
-        this.parentCommentId = parentCommentId;
-        return this;
-    }
 }

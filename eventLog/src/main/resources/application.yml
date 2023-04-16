@@ -4,7 +4,7 @@ spring:
     url: jdbc:mysql://localhost:3306/event_log?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true&serverTimezone=UTC
 
     username: root
-    password: 
+    password: SavovIvan202224
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:

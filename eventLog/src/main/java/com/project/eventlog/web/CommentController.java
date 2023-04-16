@@ -79,23 +79,7 @@ public class CommentController {
         }
     }
 
-    @PostMapping("/{commentId}/add-reply")
-    public String addReply(@PathVariable Long commentId,
-                           @Valid @ModelAttribute("commentBindingModel") CommentBindingModel commentBindingModel,
-                           BindingResult bindingResult, RedirectAttributes redirectAttributes,
-                           @RequestParam(required = false) Long eventId) {
-        if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("commentBindingModel", commentBindingModel);
-            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.commentBindingModel", bindingResult);
 
-            return getRedirectPath(eventId);
-        }
-
-        CommentServiceModel commentServiceModel = modelMapper.map(commentBindingModel, CommentServiceModel.class);
-        commentService.addReply(commentId, commentServiceModel);
-
-        return getRedirectPath(eventId);
-    }
 
     @PostMapping("/{commentId}/edit-comment")
     public String editComment(@PathVariable Long commentId, @RequestParam(required = false) Long eventId, @Valid @ModelAttribute("commentBindingModel") CommentBindingModel commentBindingModel, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
@@ -131,6 +115,4 @@ public class CommentController {
             return "redirect:/comments/" + eventId + "/chat-room";
         }
     }
-
-
 }

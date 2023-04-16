@@ -6,12 +6,9 @@ import java.util.List;
 public class CommentViewModel {
     private long id;
     private String authorUsername;
-
     private long authorId;
-    private String eventName;
     private String content;
     private String dateTime;
-    private List<CommentViewModel> replies = new ArrayList<>();
 
     public CommentViewModel() {
     }
@@ -43,14 +40,6 @@ public class CommentViewModel {
         return this;
     }
 
-    public String getEventName() {
-        return eventName;
-    }
-
-    public CommentViewModel setEventName(String eventName) {
-        this.eventName = eventName;
-        return this;
-    }
 
     public String getContent() {
         return content;
@@ -70,12 +59,5 @@ public class CommentViewModel {
         return this;
     }
 
-    public List<CommentViewModel> getReplies() {
-        return replies;
-    }
 
-    public CommentViewModel setReplies(List<CommentViewModel> replies) {
-        this.replies = replies;
-        return this;
-    }
 }

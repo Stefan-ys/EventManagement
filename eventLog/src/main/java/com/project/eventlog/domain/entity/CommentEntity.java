@@ -27,11 +27,6 @@ public class CommentEntity extends BaseEntity {
     @Size(min = 1, max = 1000)
     private String content;
 
-    @OneToMany(mappedBy = "parentComment", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CommentEntity> replies = new ArrayList<>();
-
-    @ManyToOne
-    private CommentEntity parentComment;
 
     public CommentEntity() {
     }
@@ -73,21 +68,4 @@ public class CommentEntity extends BaseEntity {
     }
 
 
-    public List<CommentEntity> getReplies() {
-        return replies;
-    }
-
-    public CommentEntity setReplies(List<CommentEntity> replies) {
-        this.replies = replies;
-        return this;
-    }
-
-    public CommentEntity getParentComment() {
-        return parentComment;
-    }
-
-    public CommentEntity setParentComment(CommentEntity parentComment) {
-        this.parentComment = parentComment;
-        return this;
-    }
 }
