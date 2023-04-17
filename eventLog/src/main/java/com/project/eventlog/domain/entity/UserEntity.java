@@ -51,7 +51,7 @@ public class UserEntity extends BaseEntity {
     @OneToMany(mappedBy = "author")
     private Set<CommentEntity> comments = new HashSet<>();
 
-    @OneToMany(mappedBy = "author")
+    @OneToMany(mappedBy = "author", fetch = FetchType.EAGER)
     private Set<PictureEntity> pictures = new HashSet<>();
 
     public UserEntity() {
