@@ -1,5 +1,5 @@
 package com.project.eventlog.domain.enums;
 
 public enum EventStatusEnum {
-    ACTIVE, COMPLETED, FULL
+    ACTIVE, COMPLETED, FULL, CANCELLED
 }

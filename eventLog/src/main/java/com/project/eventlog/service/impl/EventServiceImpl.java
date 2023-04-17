@@ -12,6 +12,7 @@ import com.project.eventlog.repository.EventRepository;
 import com.project.eventlog.repository.PictureRepository;
 import com.project.eventlog.repository.UserRepository;
 import com.project.eventlog.service.EventService;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -56,6 +57,9 @@ public class EventServiceImpl implements EventService {
         if (filter.equalsIgnoreCase("COMPLETED")) {
             eventStatusEnum = EventStatusEnum.COMPLETED;
         }
+        if (filter.equalsIgnoreCase("CANCELLED")) {
+            eventStatusEnum = EventStatusEnum.CANCELLED;
+        }
 
 
         return eventRepository
@@ -67,15 +71,18 @@ public class EventServiceImpl implements EventService {
 
 
     @Override
-    public long addEvent(EventServiceModel eventServiceModel, String username) {
+    @Transactional
+    public EventViewModel addEvent(EventServiceModel eventServiceModel, String username) {
         UserEntity userEntity = userRepository.findByUsernameIgnoreCase(username).orElseThrow();
+
         EventsEntity event = modelMapper.map(eventServiceModel, EventsEntity.class);
         event
-
                 .setHost(userEntity)
                 .setStatus(EventStatusEnum.ACTIVE);
 
-        return eventRepository.save(event).getId();
+        eventRepository.save(event);
+
+        return convertEntityToViewModel(event);
 
     }
 
@@ -102,6 +109,7 @@ public class EventServiceImpl implements EventService {
         if (eventsEntity.getNumberOfParticipants() <= eventsEntity.getParticipants().size()) {
             throw new IllegalStateException("Maximum number of participants reached.");
         }
+
         eventsEntity.getParticipants().add(userEntity);
         eventRepository.save(eventsEntity);
     }
@@ -180,18 +188,23 @@ public class EventServiceImpl implements EventService {
 
     }
 
+    @Override
+    public void cancelEvent(Long eventId) {
+        EventsEntity eventsEntity = eventRepository.findById(eventId).orElseThrow();
+        eventsEntity.setStatus(eventsEntity
+                .getStatus()
+                .equals(EventStatusEnum.CANCELLED) ? EventStatusEnum.ACTIVE : EventStatusEnum.CANCELLED);
+
+        eventRepository.save(eventsEntity);
+
+    }
+
 
     private EventViewModel convertEntityToViewModel(EventsEntity event) {
         updateEventStatus(event);
-
         EventViewModel viewModel = modelMapper.map(event, EventViewModel.class);
-
         viewModel
-                .setHostId(event.getHost().getId())
                 .setHostUsername(event.getHost().getUsername())
-                .setLocation(event.getLocation().name())
-                .setCategory(event.getCategory().name())
-                .setStatus(event.getStatus().name())
                 .setEventDateTime(dateTimeFormatter.format(event.getEventDateTime()))
                 .setNumberOfParticipants(String.format("%d / %d", event.getParticipants().size(), event.getNumberOfParticipants()))
                 .setPictures(event.getPictures().stream().map(p -> modelMapper.map(p, PictureViewModel.class)).toList());
@@ -199,6 +212,10 @@ public class EventServiceImpl implements EventService {
     }
 
     private void updateEventStatus(EventsEntity eventsEntity) {
+        if (eventsEntity.getStatus().equals(EventStatusEnum.CANCELLED)) {
+            return;
+        }
+
         LocalDateTime localDateTimeNow = LocalDateTime.now();
         if (eventsEntity.getEventDateTime().isBefore(localDateTimeNow)) {
             eventsEntity.setStatus(EventStatusEnum.COMPLETED);

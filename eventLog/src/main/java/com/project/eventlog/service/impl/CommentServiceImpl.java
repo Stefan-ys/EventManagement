@@ -3,12 +3,15 @@ package com.project.eventlog.service.impl;
 import com.project.eventlog.domain.dtos.service.CommentServiceModel;
 import com.project.eventlog.domain.dtos.view.CommentViewModel;
 import com.project.eventlog.domain.entity.CommentEntity;
+import com.project.eventlog.domain.entity.EventsEntity;
 import com.project.eventlog.repository.CommentRepository;
 import com.project.eventlog.repository.EventRepository;
+import com.project.eventlog.repository.UserRepository;
 import com.project.eventlog.service.CommentService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,14 +22,17 @@ public class CommentServiceImpl implements CommentService {
     private final ModelMapper modelMapper;
     private final EventRepository eventRepository;
     private final DateTimeFormatter dateTimeFormatter;
+    private final UserRepository userRepository;
 
 
     public CommentServiceImpl(CommentRepository commentRepository, ModelMapper modelMapper,
-                              EventRepository eventRepository, DateTimeFormatter dateTimeFormatter) {
+                              EventRepository eventRepository, DateTimeFormatter dateTimeFormatter,
+                              UserRepository userRepository) {
         this.commentRepository = commentRepository;
         this.modelMapper = modelMapper;
         this.eventRepository = eventRepository;
         this.dateTimeFormatter = dateTimeFormatter;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -47,26 +53,26 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void addComment(CommentServiceModel commentServiceModel) {
-        CommentEntity commentEntity = modelMapper.map(commentServiceModel, CommentEntity.class);
-        if (eventRepository.findById(commentServiceModel.getEventId()).isEmpty()) {
-            commentEntity.setEvent(null);
+    public CommentViewModel addComment(CommentServiceModel commentServiceModel) {
+        CommentEntity commentEntity = new CommentEntity()
+                .setAuthor(userRepository.findById(commentServiceModel.getAuthorId()).orElseThrow())
+                .setContent(commentServiceModel.getContent())
+                .setEvent(null)
+                .setDateTime(LocalDateTime.now());
+
+        if (commentServiceModel.getEventId() != null) {
+            EventsEntity eventEntity = eventRepository.findById(commentServiceModel.getEventId()).orElseThrow();
+            commentEntity.setEvent(eventEntity);
         }
+
         commentRepository.save(commentEntity);
+        return modelMapper.map(commentEntity, CommentViewModel.class);
     }
 
 
     @Override
     public void deleteComment(Long commentId) {
         commentRepository.deleteById(commentId);
-
-    }
-
-    @Override
-    public void editComment(Long commentId, CommentServiceModel commentServiceModel) {
-        CommentEntity commentEntity = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("No such comment"));
-        commentEntity.setContent(commentServiceModel.getContent());
-        commentRepository.save(commentEntity);
 
     }
 

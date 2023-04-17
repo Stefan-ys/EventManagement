@@ -9,38 +9,17 @@ import java.time.LocalDateTime;
 
 public class EventServiceModel {
 
-    private long id;
-
     private String name;
-
     private String description;
-
     private LocationEnum location;
-
     private LocalDateTime eventDateTime;
-
-    private long hostUserId;
-
     private CategoryEnum category;
-
     private int numberOfParticipants;
-
     private BigDecimal price;
-
     private int duration;
-
     private EventStatusEnum status;
 
     public EventServiceModel() {
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public EventServiceModel setId(long id) {
-        this.id = id;
-        return this;
     }
 
     public String getName() {
@@ -76,15 +55,6 @@ public class EventServiceModel {
 
     public EventServiceModel setEventDateTime(LocalDateTime eventDateTime) {
         this.eventDateTime = eventDateTime;
-        return this;
-    }
-
-    public long getHostUserId() {
-        return hostUserId;
-    }
-
-    public EventServiceModel setHostUserId(long hostUserId) {
-        this.hostUserId = hostUserId;
         return this;
     }
 

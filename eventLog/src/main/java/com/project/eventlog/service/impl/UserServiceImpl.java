@@ -10,12 +10,6 @@ import com.project.eventlog.domain.enums.RoleEnum;
 import com.project.eventlog.repository.*;
 import com.project.eventlog.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
-import org.modelmapper.ModelMapper;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,42 +22,23 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-
     private final UserRoleRepository userRoleRepository;
-    private final UserDetailsService userDetailsService;
-    private final ModelMapper modelMapper;
-
-    private final ApplicationUserDetailsService applicationUserDetailsService;
     private final EventRepository eventRepository;
     private final CommentRepository commentRepository;
     private final PictureRepository pictureRepository;
 
     public UserServiceImpl(PasswordEncoder passwordEncoder, UserRepository userRepository,
-                           UserRoleRepository userRoleRepository, UserDetailsService userDetailsService, ModelMapper modelMapper, ApplicationUserDetailsService applicationUserDetailsService,
+                           UserRoleRepository userRoleRepository,
                            EventRepository eventRepository,
                            CommentRepository commentRepository,
                            PictureRepository pictureRepository) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.userRoleRepository = userRoleRepository;
-        this.userDetailsService = userDetailsService;
-        this.modelMapper = modelMapper;
-        this.applicationUserDetailsService = applicationUserDetailsService;
         this.eventRepository = eventRepository;
         this.commentRepository = commentRepository;
         this.pictureRepository = pictureRepository;
     }
-
-    @Override
-    public boolean checkUserName(String userName) {
-        return userRepository.findByUsernameIgnoreCase(userName).isPresent();
-    }
-
-    @Override
-    public boolean checkEmailAddress(String userEmail) {
-        return userRepository.findByEmailIgnoreCase(userEmail).isPresent();
-    }
-
 
     @Override
     public void registerUser(UserRegistrationServiceModel serviceModel) {
@@ -83,17 +58,6 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(userEntity);
 
-
-        UserDetails principal = applicationUserDetailsService.loadUserByUsername(userEntity.getUsername());
-
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                principal,
-                userEntity.getPassword(),
-                principal.getAuthorities());
-
-        SecurityContextHolder
-                .getContext()
-                .setAuthentication(authentication);
     }
 
     @Override
@@ -102,21 +66,6 @@ public class UserServiceImpl implements UserService {
                 .map(this::convertToViewModel)
                 .collect(Collectors.toList());
 
-    }
-
-    private UserViewModel convertToViewModel(UserEntity userEntity) {
-        return new UserViewModel()
-                .setId(userEntity.getId())
-                .setUsername(userEntity.getUsername())
-                .setImageUrl(userEntity.getImageUrl())
-                .setLocation(userEntity.getLocation().name())
-                .setFirstName(userEntity.getFirstName())
-                .setLastName(userEntity.getLastName())
-                .setEmail(userEntity.getEmail())
-                .setPhoneNumber(userEntity.getPhoneNumber())
-                .setRole(getUserRole(userEntity))
-                .setNumberOfEventsHosted(userEntity.getEventsHosted().size())
-                .setNumberOfEventsJoined(userEntity.getEventsJoined().size());
     }
 
     private String getUserRole(UserEntity userEntity) {
@@ -225,6 +174,22 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    public void changeRole(Long userId) {
+        UserEntity user = userRepository.findById(userId).orElseThrow();
+        for (UserRoleEntity userRole : user.getRoles()) {
+            if (userRole.getRole().equals(RoleEnum.ADMIN)) {
+                user.getRoles().remove(userRole);
+                userRepository.save(user);
+                return;
+            }
+        }
+        UserRoleEntity userRole = userRoleRepository.findByRole(RoleEnum.ADMIN);
+        user.getRoles().add(userRole);
+        userRepository.save(user);
+    }
+
+
+    @Override
     public UserViewModel getUserByUsername(String username) {
         UserEntity userEntity = userRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new EntityNotFoundException("User with username " + username + " not found"));
@@ -261,5 +226,20 @@ public class UserServiceImpl implements UserService {
             user.setImageUrl(imageUrl);
         }
         return user;
+    }
+
+    private UserViewModel convertToViewModel(UserEntity userEntity) {
+        return new UserViewModel()
+                .setId(userEntity.getId())
+                .setUsername(userEntity.getUsername())
+                .setImageUrl(userEntity.getImageUrl())
+                .setLocation(userEntity.getLocation().name())
+                .setFirstName(userEntity.getFirstName())
+                .setLastName(userEntity.getLastName())
+                .setEmail(userEntity.getEmail())
+                .setPhoneNumber(userEntity.getPhoneNumber())
+                .setRole(getUserRole(userEntity))
+                .setNumberOfEventsHosted(userEntity.getEventsHosted().size())
+                .setNumberOfEventsJoined(userEntity.getEventsJoined().size());
     }
 }

@@ -3,8 +3,6 @@ package com.project.eventlog.domain.dtos.service;
 import com.project.eventlog.domain.enums.LocationEnum;
 
 public class UserEditServiceModel {
-
-
     private String imageUrl;
     private LocationEnum location;
     private String firstName;

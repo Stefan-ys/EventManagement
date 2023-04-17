@@ -11,11 +11,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/users")
 public class LoginController {
+
+    // ACCESS TO LOGIN
     @GetMapping("/login")
     public String getLogin() {
         return "user-auth-login";
     }
 
+    // LOGIN ERROR
     @PostMapping("/login-error")
     public String onFailedLogin(
             @ModelAttribute(UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_USERNAME_KEY) String username,

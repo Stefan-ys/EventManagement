@@ -14,14 +14,13 @@ import java.util.Optional;
 @Repository
 public interface EventRepository extends JpaRepository<EventsEntity, Long> {
 
-    List<EventsEntity> findEventsEntitiesByHostId(Long hostId);
 
     @Query("SELECT e FROM EventsEntity e ORDER BY "
             + "CASE WHEN :sortBy = 'name' THEN e.name END ASC, "
             + "CASE WHEN :sortBy = 'date' THEN e.eventDateTime END ASC, "
             + "CASE WHEN :sortBy = 'location' THEN e.location END ASC, "
             + "CASE WHEN :sortBy = 'host' THEN e.host.username END ASC, "
-            + "CASE WHEN :sortBy = 'categoriy' THEN e.category END ASC")
+            + "CASE WHEN :sortBy = 'category' THEN e.category END ASC")
     List<EventsEntity> findAllEventsInOrder(@Param("sortBy") String sortBy);
 
     @Query("SELECT e FROM EventsEntity e WHERE e.status = :filter " +

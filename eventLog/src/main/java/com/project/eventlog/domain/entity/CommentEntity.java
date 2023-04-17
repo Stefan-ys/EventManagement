@@ -1,12 +1,12 @@
 package com.project.eventlog.domain.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "comments")
@@ -15,11 +15,8 @@ public class CommentEntity extends BaseEntity {
     @NotNull
     @ManyToOne
     private UserEntity author;
-
-
     @ManyToOne
     private EventsEntity event;
-
     @NotNull
     private LocalDateTime dateTime;
 

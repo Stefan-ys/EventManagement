@@ -19,6 +19,8 @@ spring:
         name: <username>
         password: <password>
 server:
+  servlet:
+    context-path:
   port: 8000
 
 spring.main.allow-circular-references: true

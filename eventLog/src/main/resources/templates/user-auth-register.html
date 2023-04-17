@@ -65,7 +65,8 @@
                     <input type="text" th:field="*{phoneNumber}" class="form-control"
                            th:classappend="${#fields.hasErrors('phoneNumber')} ? 'is-invalid' : ''"
                            id="phoneNumber" required>
-                    <div th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}" class="invalid-feedback"></div>
+                    <div th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"
+                         class="invalid-feedback"></div>
                 </div>
                 <div class="form-group">
                     <label for="password">Password:</label>
@@ -81,7 +82,7 @@
                            th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid' : ''"
                            id="confirmPassword" required>
                     <div th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"
-                         class="invalid-feedback"></div>
+                         class="invalid-feedback"><p>Password does not match</p></div>
                 </div>
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary">Register</button>

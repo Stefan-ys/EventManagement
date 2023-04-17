@@ -45,13 +45,13 @@ public class UserEntity extends BaseEntity {
     @OneToMany(mappedBy = "host", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<EventsEntity> eventsHosted = new HashSet<>();
 
-    @ManyToMany(mappedBy = "participants", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+   @ManyToMany(mappedBy = "participants", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<EventsEntity> eventsJoined = new HashSet<>();
 
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "author")
     private Set<CommentEntity> comments = new HashSet<>();
 
-    @OneToMany(mappedBy = "author",fetch = FetchType.EAGER,cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "author")
     private Set<PictureEntity> pictures = new HashSet<>();
 
     public UserEntity() {

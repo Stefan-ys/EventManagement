@@ -10,7 +10,7 @@ import java.util.List;
 public interface EventService {
     List<EventViewModel> getAllEvents(String sort, String filter);
 
-    long addEvent(EventServiceModel eventServiceModel, String username);
+    EventViewModel addEvent(EventServiceModel eventServiceModel, String username);
 
     EventViewModel getEventById(Long id);
 
@@ -32,4 +32,6 @@ public interface EventService {
     void addPictureToEvent(PictureViewModel pictureServiceModel);
 
     List<PictureViewModel> getPicturesFromEvent(Long eventId);
+
+    void cancelEvent(Long eventId);
 }

@@ -1,6 +1,7 @@
 package com.project.eventlog.config;
 
 
+import com.project.eventlog.domain.enums.RoleEnum;
 import com.project.eventlog.repository.UserRepository;
 import com.project.eventlog.service.impl.ApplicationUserDetailsService;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -35,10 +36,10 @@ public class SecurityConfig {
 
                 authorizeHttpRequests().
                 requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll().
-                requestMatchers( "/").permitAll().
-                requestMatchers( "/users/login", "/users/register", "/users/login-error").anonymous().
-//                requestMatchers("/users/all-users").hasRole(RoleEnum.ADMIN.name()).
-        anyRequest().authenticated().
+                requestMatchers("/").permitAll().
+                requestMatchers("/users/login", "/users/register", "/users/login-error").anonymous().
+                requestMatchers("/management").hasRole(RoleEnum.ADMIN.name()).
+                anyRequest().authenticated().
                 and().
                 formLogin().
                 loginPage("/users/login").

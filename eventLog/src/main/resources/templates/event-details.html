@@ -26,6 +26,10 @@
                 <dd class="col-sm-9" th:text="${event.getStatus()}"
                     th:style="${event.getStatus() == 'ACTIVE' ? 'background-color: #d1e7dd;' : 'background-color: #f8d7da;'}"></dd>
             </dl>
+            <form class="col-md-3" th:if="${canEdit}" th:action="@{/events/cancel}" th:method="post">
+                <input type="hidden" name="eventId" th:value="${eventId}" />
+                <button type="submit" class="btn btn-primary">Cancel Event</button>
+            </form>
 
             <h2>Participants:</h2>
             <table class="table table-striped">
@@ -71,13 +75,14 @@
                 </form>
 
 
-                <form th:action="@{/comments/{eventId}/chat-room(eventId=${event.id})}" th:method="GET">
+                <form th:action="@{/comments/{eventId}/chat-room(eventId=${event.id})}" th:method="get">
                     <button type="submit" class="btn btn-primary">Event Chat Room</button>
                 </form>
                 <form class="col-md-3">
                     <a th:href="@{/events/{eventId}/add-picture(eventId=${event.getId()})}" th:method="get"
                        class="btn btn-primary">Event Pictures</a>
                 </form>
+
             </div>
         </div>
     </div>

@@ -30,6 +30,7 @@ public class CommentController {
         this.userService = userService;
         this.modelMapper = modelMapper;
     }
+    // ACCESS PAGE
 
     @GetMapping({"/chat-room", "/{eventId}/chat-room"})
     public String getComments(@PathVariable(required = false) Long eventId, Model model) {
@@ -52,6 +53,7 @@ public class CommentController {
         return "/chat-room";
     }
 
+    // ADD COMMENT
     @PostMapping(value = {"/add-comment", "/{eventId}/add-comment"})
     public String addComment(@PathVariable(required = false) Long eventId,
                              @Valid @ModelAttribute("commentBindingModel") CommentBindingModel commentBindingModel,
@@ -81,21 +83,7 @@ public class CommentController {
 
 
 
-    @PostMapping("/{commentId}/edit-comment")
-    public String editComment(@PathVariable Long commentId, @RequestParam(required = false) Long eventId, @Valid @ModelAttribute("commentBindingModel") CommentBindingModel commentBindingModel, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-        if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("commentBindingModel", commentBindingModel);
-            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.commentBindingModel", bindingResult);
-
-            return getRedirectPath(eventId);
-        }
-
-        CommentServiceModel commentServiceModel = modelMapper.map(commentBindingModel, CommentServiceModel.class);
-        commentService.editComment(commentId, commentServiceModel);
-
-        return getRedirectPath(eventId);
-    }
-
+    // DELETE COMMENT
     @PostMapping("/{commentId}/delete-comment")
     public String deleteComment(@PathVariable Long commentId, @RequestParam(name = "eventId", required = false) Long eventId) {
         commentService.deleteComment(commentId);
@@ -107,6 +95,10 @@ public class CommentController {
     public CommentBindingModel commentBindingModel() {
         return new CommentBindingModel();
     }
+
+
+
+    // HELPERS
 
     private String getRedirectPath(Long eventId) {
         if (eventId == null) {

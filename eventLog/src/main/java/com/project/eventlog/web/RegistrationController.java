@@ -29,29 +29,23 @@ public class RegistrationController {
         this.modelMapper = modelMapper;
     }
 
-
+    // ACCESS TO REGISTRATION
     @GetMapping("/register")
     public String getRegister(Model model) {
         model.addAttribute("locations", EnumSet.allOf(LocationEnum.class));
         return "user-auth-register";
     }
 
-    @GetMapping
-    public String redirectToLogin() {
-        return "redirect:/users/login";
-    }
-
+    // REGISTER
     @PostMapping("/register")
     public String postRegister(@Valid UserRegisterBindingModel userRegisterBindingModel,
                                BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("userRegisterBindingModel", userRegisterBindingModel);
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.userRegisterBindingModel", bindingResult);
 
             return "redirect:/users/register";
         }
-
 
         UserRegistrationServiceModel serviceModel = modelMapper.map(userRegisterBindingModel, UserRegistrationServiceModel.class);
         userService.registerUser(serviceModel);
@@ -73,3 +67,4 @@ public class RegistrationController {
         return new UserRegisterBindingModel();
     }
 }
+

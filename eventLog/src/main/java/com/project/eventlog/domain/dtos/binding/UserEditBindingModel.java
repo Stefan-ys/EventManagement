@@ -8,7 +8,6 @@ import org.hibernate.validator.constraints.URL;
 
 public class UserEditBindingModel {
 
-
     @URL(message = "Invalid URL format")
     private String imageUrl;
 

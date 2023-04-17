@@ -9,12 +9,9 @@ import com.project.eventlog.domain.dtos.view.UserViewModel;
 import com.project.eventlog.domain.enums.CategoryEnum;
 import com.project.eventlog.domain.enums.LocationEnum;
 import com.project.eventlog.service.EventService;
-import com.project.eventlog.service.PictureService;
 import com.project.eventlog.service.UserService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,26 +26,30 @@ import java.util.List;
 public class EventController {
     private final EventService eventService;
     private final UserService userService;
-    private final PictureService pictureService;
     private final ModelMapper modelMapper;
 
-    public EventController(EventService eventService, UserService userService, PictureService pictureService, ModelMapper modelMapper) {
+    public EventController(EventService eventService, UserService userService, ModelMapper modelMapper) {
         this.eventService = eventService;
         this.userService = userService;
-        this.pictureService = pictureService;
         this.modelMapper = modelMapper;
     }
 
-    //Get event(s)
+    // ACCESS EVENT BY ID
     @GetMapping("/{eventId}/details")
     public String getEventById(@PathVariable Long eventId, Model model, Principal principal) {
         EventViewModel eventViewModel = eventService.getEventById(eventId);
-        model.addAttribute("event", eventViewModel);
+
         List<UserViewModel> eventParticipants = eventService.getParticipantsFromEvent(eventId);
+
+        model.addAttribute("event", eventViewModel);
         model.addAttribute("participants", eventParticipants);
         model.addAttribute("isEventParticipant", eventService.isEventParticipant(eventId, principal.getName()));
+        model.addAttribute("canEdit", canEdit(principal.getName(), eventViewModel.getHostUsername()));
+
         return "event-details";
     }
+
+    // ACCESS ALL EVENT
 
     @GetMapping()
     public String getAllEvents(Model model, @RequestParam(defaultValue = "name") String sortBy,
@@ -58,12 +59,8 @@ public class EventController {
         return "events-all";
     }
 
-    @ModelAttribute("eventBindingModel")
-    public EventBindingModel eventBindingModel() {
-        return new EventBindingModel();
-    }
+    // CREATE EVENT
 
-    //Create event
     @GetMapping("/create")
     public String createEventForm(Model model) {
         model.addAttribute("locations", LocationEnum.values());
@@ -75,7 +72,7 @@ public class EventController {
     public String addEvent(@Valid EventBindingModel eventBindingModel,
                            BindingResult bindingResult,
                            RedirectAttributes redirectAttributes,
-                           @AuthenticationPrincipal User user) {
+                           Principal principal) {
 
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("eventBindingModel", eventBindingModel);
@@ -86,15 +83,16 @@ public class EventController {
 
         EventServiceModel eventServiceModel = modelMapper.map(eventBindingModel, EventServiceModel.class);
 
-        long eventId = eventService.addEvent(eventServiceModel, user.getUsername());
+
+        EventViewModel eventViewModel = eventService.addEvent(eventServiceModel, principal.getName());
+        long eventId = eventViewModel.getId();
 
 
         return "redirect:/events/" + eventId + "/details";
     }
-    //Edit event  TO DO
 
-    //Join event
 
+    // JOIN EVENT
     @PostMapping("/join")
     public String joinEvent(@RequestParam Long eventId,
                             Principal principal,
@@ -104,15 +102,23 @@ public class EventController {
         return "redirect:/events/" + eventId + "/details";
     }
 
-    //Leave event
 
+    // LEAVE EVENT
     @PostMapping("/leave")
-    public String leaveEvent(@RequestParam Long eventId, Principal principal, RedirectAttributes redirectAttributes) {
+    public String leaveEvent(@RequestParam Long eventId, Principal principal) {
         eventService.leaveEvent(eventId, principal.getName());
-        redirectAttributes.addFlashAttribute("successMessage", "You have successfully left the event!");
         return "redirect:/events/" + eventId + "/details";
     }
 
+    // CANCEL EVENT
+    @PostMapping("/cancel")
+    public String cancelEvent(@RequestParam Long eventId) {
+        eventService.cancelEvent(eventId);
+        return "redirect:/events/" + eventId + "/details";
+
+    }
+
+    // ACCESS  ADD PICTURE
     @GetMapping("/{eventId}/add-picture")
     public String showAddPicturesForm(@PathVariable Long eventId, Model model) {
         PictureBindingModel pictureBindingModel = new PictureBindingModel();
@@ -123,6 +129,7 @@ public class EventController {
         return "event-add-pictures";
     }
 
+    // ADD PICTURE TO EVENT OPEN FOR ALL USERS
     @PostMapping("/{eventId}/add-picture")
     public String addPicturesToEvent(@PathVariable Long eventId,
                                      @Valid @ModelAttribute("pictureBindingModel") PictureBindingModel pictureBindingModel,
@@ -142,5 +149,19 @@ public class EventController {
 
 
         return "redirect:/events/{eventId}/add-picture";
+    }
+
+
+    @ModelAttribute("eventBindingModel")
+    public EventBindingModel eventBindingModel() {
+        return new EventBindingModel();
+    }
+
+
+    private boolean canEdit(String currentUsername, String username) {
+        boolean isAdmin = userService.isUserAdmin(currentUsername);
+        boolean isOwner = currentUsername.equals(username);
+        return isAdmin || isOwner;
+
     }
 }

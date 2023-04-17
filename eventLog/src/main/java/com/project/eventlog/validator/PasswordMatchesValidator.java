@@ -18,12 +18,14 @@ public class PasswordMatchesValidator implements ConstraintValidator<PasswordMat
 
     @Override
     public boolean isValid(Object object, ConstraintValidatorContext constraintValidatorContext) {
+
         BeanWrapper beanWrapper = new BeanWrapperImpl(object);
         String password = (String) beanWrapper.getPropertyValue(passwordFieldName);
         String confirmPassword = (String) beanWrapper.getPropertyValue(confirmPasswordFieldName);
         if (password == null || confirmPassword == null) {
             return true;
         }
+
         return password.equals(confirmPassword);
     }
 }

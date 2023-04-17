@@ -3,21 +3,13 @@ package com.project.eventlog.domain.dtos.service;
 import com.project.eventlog.domain.enums.LocationEnum;
 
 public class UserRegistrationServiceModel {
-
     private String username;
-
     private String imageUrl;
-
     private LocationEnum location;
-
     private String firstName;
-
     private String lastName;
-
     private String email;
-
     private String phoneNumber;
-
     private String password;
 
     public UserRegistrationServiceModel() {

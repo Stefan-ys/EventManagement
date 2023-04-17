@@ -1,12 +1,9 @@
 package com.project.eventlog.domain.dtos.view;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class CommentViewModel {
     private long id;
     private String authorUsername;
-    private long authorId;
+    private Long authorId;
     private String content;
     private String dateTime;
 
@@ -31,11 +28,11 @@ public class CommentViewModel {
         return this;
     }
 
-    public long getAuthorId() {
+    public Long getAuthorId() {
         return authorId;
     }
 
-    public CommentViewModel setAuthorId(long authorId) {
+    public CommentViewModel setAuthorId(Long authorId) {
         this.authorId = authorId;
         return this;
     }
