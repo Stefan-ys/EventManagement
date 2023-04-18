@@ -42,10 +42,7 @@ public class EventsEntity extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private Set<UserEntity> participants = new HashSet<>();
-    @OneToMany(mappedBy = "event", fetch = FetchType.EAGER)
-    private Set<CommentEntity> comments = new HashSet<>();
-    @OneToMany(mappedBy = "event", fetch = FetchType.EAGER)
-    private Set<PictureEntity> pictures = new HashSet<>();
+
 
     public EventsEntity() {
     }
@@ -149,21 +146,5 @@ public class EventsEntity extends BaseEntity {
         return this;
     }
 
-    public Set<CommentEntity> getComments() {
-        return comments;
-    }
 
-    public EventsEntity setComments(Set<CommentEntity> comments) {
-        this.comments = comments;
-        return this;
-    }
-
-    public Set<PictureEntity> getPictures() {
-        return pictures;
-    }
-
-    public EventsEntity setPictures(Set<PictureEntity> pictures) {
-        this.pictures = pictures;
-        return this;
-    }
 }

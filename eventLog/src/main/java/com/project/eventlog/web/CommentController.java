@@ -91,20 +91,20 @@ public class CommentController {
     }
 
 
-    @ModelAttribute("commentBindingModel")
-    public CommentBindingModel commentBindingModel() {
-        return new CommentBindingModel();
-    }
 
 
 
     // HELPERS
-
     private String getRedirectPath(Long eventId) {
         if (eventId == null) {
             return "redirect:/comments/chat-room";
         } else {
             return "redirect:/comments/" + eventId + "/chat-room";
         }
+    }
+
+    @ModelAttribute("commentBindingModel")
+    public CommentBindingModel commentBindingModel() {
+        return new CommentBindingModel();
     }
 }

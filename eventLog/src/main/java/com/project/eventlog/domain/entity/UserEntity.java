@@ -45,14 +45,9 @@ public class UserEntity extends BaseEntity {
     @OneToMany(mappedBy = "host", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<EventsEntity> eventsHosted = new HashSet<>();
 
-   @ManyToMany(mappedBy = "participants", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "participants", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<EventsEntity> eventsJoined = new HashSet<>();
 
-    @OneToMany(mappedBy = "author")
-    private Set<CommentEntity> comments = new HashSet<>();
-
-    @OneToMany(mappedBy = "author", fetch = FetchType.EAGER)
-    private Set<PictureEntity> pictures = new HashSet<>();
 
     public UserEntity() {
     }
@@ -156,21 +151,4 @@ public class UserEntity extends BaseEntity {
         return this;
     }
 
-    public Set<CommentEntity> getComments() {
-        return comments;
-    }
-
-    public UserEntity setComments(Set<CommentEntity> comments) {
-        this.comments = comments;
-        return this;
-    }
-
-    public Set<PictureEntity> getPictures() {
-        return pictures;
-    }
-
-    public UserEntity setPictures(Set<PictureEntity> pictures) {
-        this.pictures = pictures;
-        return this;
-    }
 }

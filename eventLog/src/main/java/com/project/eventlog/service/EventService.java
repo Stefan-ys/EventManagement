@@ -14,9 +14,6 @@ public interface EventService {
 
     EventViewModel getEventById(Long id);
 
-    void deleteEventById(Long eventId);
-
-
     void joinEvent(Long eventId, String username);
 
     void leaveEvent(Long eventId, String username);

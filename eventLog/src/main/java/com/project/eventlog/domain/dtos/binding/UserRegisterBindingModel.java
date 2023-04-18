@@ -8,7 +8,7 @@ import com.project.eventlog.validator.UniqueUsername;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.URL;
 
-@PasswordMatches()
+@PasswordMatches
 public class UserRegisterBindingModel {
     @UniqueUsername
     @NotBlank(message = "Username cannot be blank")
@@ -45,7 +45,6 @@ public class UserRegisterBindingModel {
     @NotBlank(message = "Password is required")
     @Size(min = 4, max = 20, message = "Password must be between 4 and 20 characters")
     private String password;
-
 
     @NotBlank(message = "Confirm password is required")
     @Size(min = 4, max = 20, message = "Confirm password must be between 4 and 20 characters")

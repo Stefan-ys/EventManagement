@@ -27,7 +27,6 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
-
     private final DateTimeFormatter dateTimeFormatter;
     private final PictureRepository pictureRepository;
 
@@ -91,11 +90,6 @@ public class EventServiceImpl implements EventService {
     public EventViewModel getEventById(Long id) {
         EventsEntity event = eventRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No such event"));
         return convertEntityToViewModel(event);
-    }
-
-    @Override
-    public void deleteEventById(Long eventId) {
-        eventRepository.deleteById(eventId);
     }
 
 
@@ -170,18 +164,13 @@ public class EventServiceImpl implements EventService {
                 .setCreationDate(LocalDate.now())
                 .setImageUrl(pictureServiceModel.getImageUrl());
 
-        eventsEntity.getPictures().add(pictureEntity);
-        userEntity.getPictures().add(pictureEntity);
-
         pictureRepository.save(pictureEntity);
-        eventRepository.save(eventsEntity);
-        userRepository.save(userEntity);
+
     }
 
     @Override
     public List<PictureViewModel> getPicturesFromEvent(Long eventId) {
-        EventsEntity eventEntity = eventRepository.findById(eventId).orElseThrow();
-        return eventEntity.getPictures()
+        return pictureRepository.findAllByEventId(eventId)
                 .stream()
                 .map(picture -> modelMapper.map(picture, PictureViewModel.class))
                 .collect(Collectors.toList());
@@ -202,12 +191,15 @@ public class EventServiceImpl implements EventService {
 
     private EventViewModel convertEntityToViewModel(EventsEntity event) {
         updateEventStatus(event);
+        List<PictureViewModel> pictureViewModels = pictureRepository.findAllByEventId(event.getId())
+                .stream().map(p -> modelMapper.map(p, PictureViewModel.class)).toList();
+
         EventViewModel viewModel = modelMapper.map(event, EventViewModel.class);
         viewModel
                 .setHostUsername(event.getHost().getUsername())
                 .setEventDateTime(dateTimeFormatter.format(event.getEventDateTime()))
                 .setNumberOfParticipants(String.format("%d / %d", event.getParticipants().size(), event.getNumberOfParticipants()))
-                .setPictures(event.getPictures().stream().map(p -> modelMapper.map(p, PictureViewModel.class)).toList());
+                .setPictures(pictureViewModels);
         return viewModel;
     }
 
@@ -215,7 +207,6 @@ public class EventServiceImpl implements EventService {
         if (eventsEntity.getStatus().equals(EventStatusEnum.CANCELLED)) {
             return;
         }
-
         LocalDateTime localDateTimeNow = LocalDateTime.now();
         if (eventsEntity.getEventDateTime().isBefore(localDateTimeNow)) {
             eventsEntity.setStatus(EventStatusEnum.COMPLETED);
@@ -225,7 +216,6 @@ public class EventServiceImpl implements EventService {
             eventsEntity.setStatus(EventStatusEnum.ACTIVE);
         }
         eventRepository.save(eventsEntity);
-
     }
 
 

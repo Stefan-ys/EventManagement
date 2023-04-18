@@ -37,7 +37,6 @@ public class CommentViewModel {
         return this;
     }
 
-
     public String getContent() {
         return content;
     }
@@ -55,6 +54,4 @@ public class CommentViewModel {
         this.dateTime = dateTime;
         return this;
     }
-
-
 }

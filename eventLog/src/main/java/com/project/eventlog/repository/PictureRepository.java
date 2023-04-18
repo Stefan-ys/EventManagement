@@ -10,4 +10,5 @@ import java.util.List;
 public interface PictureRepository extends JpaRepository<PictureEntity, Long> {
     List<PictureEntity> findAllByAuthorId(Long userId);
 
+    List<PictureEntity> findAllByEventId(Long eventId);
 }

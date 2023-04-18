@@ -1,8 +1,6 @@
 package com.project.eventlog.domain.dtos.binding;
 
 import com.project.eventlog.domain.enums.LocationEnum;
-import com.project.eventlog.validator.UniqueEmailAddress;
-import com.project.eventlog.validator.UniqueUsername;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.URL;
 
