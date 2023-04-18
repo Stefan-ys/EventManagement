@@ -1,19 +1,22 @@
 package com.project.eventlog.web;
 
+import com.project.eventlog.domain.dtos.binding.UserRegisterBindingModel;
+import com.project.eventlog.domain.dtos.view.UserViewModel;
 import com.project.eventlog.domain.entity.UserEntity;
 import com.project.eventlog.domain.enums.LocationEnum;
 import com.project.eventlog.repository.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import java.util.Optional;
+
+import static org.junit.Assert.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -27,45 +30,95 @@ public class RegistrationControllerTest {
     @Mock
     private UserRepository userRepository;
 
-    @BeforeEach
-    public void setUp() {
-        userRepository.deleteAll();
+    @Autowired
+    private ModelMapper modelMapper;
+
+
+
+    @Test
+    void testGetRegister() throws Exception {
+        mockMvc.perform(get("/users/register"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("user-auth-register"));
     }
 
     @Test
-    public void testRegistrationWithValidData() throws Exception {
+    void testPostRegisterValidData() throws Exception {
+        UserRegisterBindingModel bindingModel = createBindingModel();
+
         mockMvc.perform(post("/users/register")
-                        .param("username", "testuser")
-                        .param("firstName", "John")
-                        .param("lastName", "Doe")
-                        .param("email", "testuser@example.com")
-                        .param("phoneNumber", "+1-123-456-7890")
-                        .param("location", "PERNIK")
-                        .param("password", "testpassword")
-                        .param("confirmPassword", "testpassword")
-                        .with(csrf()))
+                        .param("username", bindingModel.getUsername())
+                        .param("imageUrl", bindingModel.getImageUrl())
+                        .param("location", bindingModel.getLocation().toString())
+                        .param("firstName", bindingModel.getFirstName())
+                        .param("lastName", bindingModel.getLastName())
+                        .param("email", bindingModel.getEmail())
+                        .param("phoneNumber", bindingModel.getPhoneNumber())
+                        .param("password", bindingModel.getPassword())
+                        .param("confirmPassword", bindingModel.getConfirmPassword())
+                )
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/users/login"));
 
-        UserEntity userEntity = userRepository.findByUsername("testuser").orElse(null);
-        assertNotNull(userEntity);
-        assertEquals("testuser@example.com", userEntity.getEmail());
-        assertEquals("John", userEntity.getFirstName());
-        assertEquals("Doe", userEntity.getLastName());
-        assertEquals("+1-123-456-7890", userEntity.getPhoneNumber());
-        assertEquals(LocationEnum.PERNIK, userEntity.getLocation());
+
+        Optional<UserEntity> userEntity = userRepository.findByUsername(bindingModel.getUsername());
+        if (userEntity.isPresent()) {
+            UserViewModel user = modelMapper.map(userEntity.get(), UserViewModel.class);
+            assertNotNull(user);
+            assertEquals(bindingModel.getUsername(), user.getUsername());
+            assertEquals(bindingModel.getLocation(), user.getLocation());
+            assertEquals(bindingModel.getFirstName(), user.getFirstName());
+            assertEquals(bindingModel.getLastName(), user.getLastName());
+            assertEquals(bindingModel.getEmail(), user.getEmail());
+            assertEquals(bindingModel.getPhoneNumber(), user.getPhoneNumber());
+        } else {
+            fail("User not found");
+        }
+
+
     }
 
     @Test
-    public void testRegistrationWithInvalidData() throws Exception {
-        mockMvc.perform(post("/register")
-                        .param("username", "testuser")
-                        .param("email", "invalidemail")
-                        .param("password", "testpassword")
-                        .param("confirmPassword", "wrongpassword")
-                        .with(csrf()))
+    void testPostRegisterInvalidData() throws Exception {
+        UserRegisterBindingModel bindingModel = createBindingModel();
+        bindingModel.setUsername("");
+        bindingModel.setFirstName("");
+        bindingModel.setLastName("");
+        bindingModel.setEmail("");
+        bindingModel.setPhoneNumber("");
+
+        mockMvc.perform(post("/users/register")
+                        .param("username", bindingModel.getUsername())
+                        .param("imageUrl", bindingModel.getImageUrl())
+                        .param("location", bindingModel.getLocation().toString())
+                        .param("firstName", bindingModel.getFirstName())
+                        .param("lastName", bindingModel.getLastName())
+                        .param("email", bindingModel.getEmail())
+                        .param("phoneNumber", bindingModel.getPhoneNumber())
+                        .param("password", bindingModel.getPassword())
+                        .param("confirmPassword", bindingModel.getConfirmPassword())
+                )
                 .andExpect(status().isOk())
-                .andExpect(view().name("register"))
-                .andExpect(model().attributeHasFieldErrors("user", "email", "confirmPassword"));
+                .andExpect(view().name("user-auth-register"))
+                .andExpect(model().attributeHasFieldErrors("userRegisterBindingModel", "username"))
+                .andExpect(model().attributeHasFieldErrors("userRegisterBindingModel", "firstName"))
+                .andExpect(model().attributeHasFieldErrors("userRegisterBindingModel", "lastName"))
+                .andExpect(model().attributeHasFieldErrors("userRegisterBindingModel", "email"))
+                .andExpect(model().attributeHasFieldErrors("userRegisterBindingModel", "phoneNumber"));
+
+        assertNull(userRepository.findByUsername(bindingModel.getUsername()));
+    }
+
+    private UserRegisterBindingModel createBindingModel() {
+        UserRegisterBindingModel bindingModel = new UserRegisterBindingModel();
+        bindingModel.setUsername("user");
+        bindingModel.setLocation(LocationEnum.SOFIA);
+        bindingModel.setFirstName("John");
+        bindingModel.setLastName("Doe");
+        bindingModel.setEmail("john.doe@example.com");
+        bindingModel.setPhoneNumber("1234567890");
+        bindingModel.setPassword("password");
+        bindingModel.setConfirmPassword("password");
+        return bindingModel;
     }
 }
