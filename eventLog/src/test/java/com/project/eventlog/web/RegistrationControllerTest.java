@@ -5,6 +5,7 @@ import com.project.eventlog.domain.enums.LocationEnum;
 import com.project.eventlog.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,7 +24,7 @@ public class RegistrationControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
+    @Mock
     private UserRepository userRepository;
 
     @BeforeEach
