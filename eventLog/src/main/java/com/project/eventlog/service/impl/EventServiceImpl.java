@@ -5,7 +5,6 @@ import com.project.eventlog.domain.dtos.view.EventViewModel;
 import com.project.eventlog.domain.dtos.view.PictureViewModel;
 import com.project.eventlog.domain.dtos.view.UserViewModel;
 import com.project.eventlog.domain.entity.EventsEntity;
-import com.project.eventlog.domain.entity.PictureEntity;
 import com.project.eventlog.domain.entity.UserEntity;
 import com.project.eventlog.domain.enums.EventStatusEnum;
 import com.project.eventlog.repository.EventRepository;
@@ -16,7 +15,6 @@ import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -70,6 +68,12 @@ public class EventServiceImpl implements EventService {
 
 
     @Override
+    public EventViewModel getEventById(Long id) {
+        EventsEntity event = eventRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No such event"));
+        return convertEntityToViewModel(event);
+    }
+
+    @Override
     @Transactional
     public EventViewModel addEvent(EventServiceModel eventServiceModel, String username) {
         UserEntity userEntity = userRepository.findByUsernameIgnoreCase(username).orElseThrow();
@@ -85,12 +89,6 @@ public class EventServiceImpl implements EventService {
 
     }
 
-
-    @Override
-    public EventViewModel getEventById(Long id) {
-        EventsEntity event = eventRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No such event"));
-        return convertEntityToViewModel(event);
-    }
 
 
     @Override
@@ -120,6 +118,17 @@ public class EventServiceImpl implements EventService {
                 return;
             }
         }
+    }
+
+    @Override
+    public void cancelEvent(Long eventId) {
+        EventsEntity eventsEntity = eventRepository.findById(eventId).orElseThrow();
+        eventsEntity.setStatus(eventsEntity
+                .getStatus()
+                .equals(EventStatusEnum.CANCELLED) ? EventStatusEnum.ACTIVE : EventStatusEnum.CANCELLED);
+
+        eventRepository.save(eventsEntity);
+
     }
 
     @Override
@@ -154,39 +163,9 @@ public class EventServiceImpl implements EventService {
         return eventRepository.findParticipantByUsernameAndEventId(eventId, username).isPresent();
     }
 
-    @Override
-    public void addPictureToEvent(PictureViewModel pictureServiceModel) {
-        EventsEntity eventsEntity = eventRepository.findById(pictureServiceModel.getEventId()).orElseThrow(() -> new IllegalArgumentException("No such event Id"));
-        UserEntity userEntity = userRepository.findById(pictureServiceModel.getAuthorId()).orElseThrow(() -> new IllegalArgumentException("No such user Id"));
-        PictureEntity pictureEntity = new PictureEntity();
-        pictureEntity.setAuthor(userEntity)
-                .setEvent(eventsEntity)
-                .setCreationDate(LocalDate.now())
-                .setImageUrl(pictureServiceModel.getImageUrl());
 
-        pictureRepository.save(pictureEntity);
 
-    }
 
-    @Override
-    public List<PictureViewModel> getPicturesFromEvent(Long eventId) {
-        return pictureRepository.findAllByEventId(eventId)
-                .stream()
-                .map(picture -> modelMapper.map(picture, PictureViewModel.class))
-                .collect(Collectors.toList());
-
-    }
-
-    @Override
-    public void cancelEvent(Long eventId) {
-        EventsEntity eventsEntity = eventRepository.findById(eventId).orElseThrow();
-        eventsEntity.setStatus(eventsEntity
-                .getStatus()
-                .equals(EventStatusEnum.CANCELLED) ? EventStatusEnum.ACTIVE : EventStatusEnum.CANCELLED);
-
-        eventRepository.save(eventsEntity);
-
-    }
 
 
     private EventViewModel convertEntityToViewModel(EventsEntity event) {

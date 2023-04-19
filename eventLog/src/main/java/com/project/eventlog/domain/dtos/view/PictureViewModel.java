@@ -3,12 +3,25 @@ package com.project.eventlog.domain.dtos.view;
 import java.time.LocalDate;
 
 public class PictureViewModel {
+
+    private long Id;
     private String imageUrl;
     private LocalDate creationDate;
+
+    private String authorUsername;
     private long authorId;
     private long eventId;
 
     public PictureViewModel() {
+    }
+
+    public long getId() {
+        return Id;
+    }
+
+    public PictureViewModel setId(long id) {
+        Id = id;
+        return this;
     }
 
     public String getImageUrl() {
@@ -26,6 +39,15 @@ public class PictureViewModel {
 
     public PictureViewModel setCreationDate(LocalDate creationDate) {
         this.creationDate = creationDate;
+        return this;
+    }
+
+    public String getAuthorUsername() {
+        return authorUsername;
+    }
+
+    public PictureViewModel setAuthorUsername(String authorUsername) {
+        this.authorUsername = authorUsername;
         return this;
     }
 
@@ -47,3 +69,4 @@ public class PictureViewModel {
         return this;
     }
 }
+

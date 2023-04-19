@@ -12,7 +12,7 @@
             <h1>Gallery</h1>
             <hr>
             <div class="row">
-                <th:block th:each="picture : ${pictureViewModels}">
+                <div th:each="picture : ${pictureViewModels}">
                     <div class="col-lg-4 col-md-6 mb-4">
                         <div class="card h-100">
                             <a th:href="@{${picture.imageUrl}}" target="_blank">
@@ -23,12 +23,20 @@
                                     <a th:href="@{${picture.imageUrl}}" target="_blank" th:text="${picture.imageUrl}">Picture</a>
                                 </h4>
                             </div>
+
                         </div>
                     </div>
-                </th:block>
+                    <th:block th:if="${picture.authorUsername eq #authentication.getName() or #authorization.expression('hasRole(''ADMIN'')')}">
+                        <form th:action="@{/pictures/{pictureId}/delete-picture(pictureId=${picture.id})}" th:method="post">
+                            <input type="hidden" th:name="eventId" th:value="${eventId}"/>
+                            <button type="submit" class="btn btn-danger float-right">Delete</button>
+                        </form>
+                    </th:block>
+                </div>
             </div>
             <hr>
-            <form th:object="${pictureBindingModel}" th:action="@{/events/{eventId}/add-picture(eventId=${eventId})}" method="POST">
+
+            <form th:object="${pictureBindingModel}" th:action="@{/pictures/{eventId}/add-picture(eventId=${eventId})}" method="POST">
                 <div class="form-group">
                     <label for="imageUrl">Add a new picture:</label>
                     <input type="text" class="form-control" id="imageUrl" name="imageUrl"

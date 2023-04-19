@@ -1,10 +1,8 @@
 package com.project.eventlog.web;
 
 import com.project.eventlog.domain.dtos.binding.EventBindingModel;
-import com.project.eventlog.domain.dtos.binding.PictureBindingModel;
 import com.project.eventlog.domain.dtos.service.EventServiceModel;
 import com.project.eventlog.domain.dtos.view.EventViewModel;
-import com.project.eventlog.domain.dtos.view.PictureViewModel;
 import com.project.eventlog.domain.dtos.view.UserViewModel;
 import com.project.eventlog.domain.enums.CategoryEnum;
 import com.project.eventlog.domain.enums.LocationEnum;
@@ -26,6 +24,7 @@ import java.util.List;
 public class EventController {
     private final EventService eventService;
     private final UserService userService;
+
     private final ModelMapper modelMapper;
 
     public EventController(EventService eventService, UserService userService, ModelMapper modelMapper) {
@@ -117,40 +116,6 @@ public class EventController {
         return "redirect:/events/" + eventId + "/details";
 
     }
-
-    // ACCESS  ADD PICTURE
-    @GetMapping("/{eventId}/add-picture")
-    public String showAddPicturesForm(@PathVariable Long eventId, Model model) {
-        PictureBindingModel pictureBindingModel = new PictureBindingModel();
-        List<PictureViewModel> pictureViewModels = eventService.getPicturesFromEvent(eventId);
-        model.addAttribute("pictureBindingModel", pictureBindingModel);
-        model.addAttribute("pictureViewModels", pictureViewModels);
-        model.addAttribute("eventId", eventId);
-        return "event-add-pictures";
-    }
-
-    // ADD PICTURE TO EVENT OPEN FOR ALL USERS
-    @PostMapping("/{eventId}/add-picture")
-    public String addPicturesToEvent(@PathVariable Long eventId,
-                                     @Valid @ModelAttribute("pictureBindingModel") PictureBindingModel pictureBindingModel,
-                                     BindingResult bindingResult, RedirectAttributes redirectAttributes, Principal principal) {
-
-        if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("pictureBindingModel", pictureBindingModel);
-            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.pictureBindingModel", bindingResult);
-
-            return "event-add-pictures";
-        }
-
-        PictureViewModel pictureServiceModel = modelMapper.map(pictureBindingModel, PictureViewModel.class);
-        pictureServiceModel.setEventId(eventId);
-        pictureServiceModel.setAuthorId(userService.fetUserIdByUsername(principal.getName()));
-        eventService.addPictureToEvent(pictureServiceModel);
-
-
-        return "redirect:/events/{eventId}/add-picture";
-    }
-
 
     @ModelAttribute("eventBindingModel")
     public EventBindingModel eventBindingModel() {

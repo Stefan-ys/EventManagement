@@ -2,7 +2,6 @@ package com.project.eventlog.service;
 
 import com.project.eventlog.domain.dtos.service.EventServiceModel;
 import com.project.eventlog.domain.dtos.view.EventViewModel;
-import com.project.eventlog.domain.dtos.view.PictureViewModel;
 import com.project.eventlog.domain.dtos.view.UserViewModel;
 
 import java.util.List;
@@ -25,10 +24,6 @@ public interface EventService {
     List<EventViewModel> getEventsWhereUserIsJoined(long userId);
 
     boolean isEventParticipant(long eventId, String username);
-
-    void addPictureToEvent(PictureViewModel pictureServiceModel);
-
-    List<PictureViewModel> getPicturesFromEvent(Long eventId);
 
     void cancelEvent(Long eventId);
 }
