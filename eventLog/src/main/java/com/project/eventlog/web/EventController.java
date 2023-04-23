@@ -1,6 +1,7 @@
 package com.project.eventlog.web;
 
 import com.project.eventlog.domain.dtos.binding.EventBindingModel;
+import com.project.eventlog.domain.dtos.binding.UserChangeUsernameBindingModel;
 import com.project.eventlog.domain.dtos.service.EventServiceModel;
 import com.project.eventlog.domain.dtos.view.EventViewModel;
 import com.project.eventlog.domain.dtos.view.UserViewModel;
@@ -116,6 +117,15 @@ public class EventController {
         return "redirect:/events/" + eventId + "/details";
 
     }
+
+    @ModelAttribute("errorMessage")
+    public String errorMessage(@Valid UserChangeUsernameBindingModel userChangeUsernameBindingModel, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "Please correct the errors below.";
+        }
+        return null;
+    }
+
 
     @ModelAttribute("eventBindingModel")
     public EventBindingModel eventBindingModel() {
